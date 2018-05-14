@@ -1,4 +1,4 @@
-package crealytics.java_challenge.reporting_ws.main;
+package com.crealytics.java_challenge.reporting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
