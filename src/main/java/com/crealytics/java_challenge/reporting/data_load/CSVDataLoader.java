@@ -4,6 +4,7 @@ import com.crealytics.java_challenge.reporting.config.ConfigProperties;
 import com.crealytics.java_challenge.reporting.data_model.MonthEnum;
 import com.crealytics.java_challenge.reporting.data_model.Report;
 import com.crealytics.java_challenge.reporting.data_model.ReportId;
+import com.crealytics.java_challenge.reporting.metrics.MetricsCalculator;
 import com.crealytics.java_challenge.reporting.store.InMemoryReportStore;
 import com.crealytics.java_challenge.reporting.util.MonthUtil;
 import org.slf4j.Logger;
@@ -32,6 +33,12 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
 
     @Autowired
     private ConfigProperties configProperties;
+
+    @Autowired
+    private MetricsCalculator metricsCalculator;
+
+    @Autowired
+    private MonthUtil monthUtil;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -80,7 +87,7 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
             return null;
         }
 
-        MonthEnum monthEnum = MonthUtil.getMonthEnum(fileNameTokens[1]);
+        MonthEnum monthEnum = monthUtil.getMonthEnum(fileNameTokens[1]);
         if(monthEnum == null ){
             logger.error("File name format is not correct: "+fileName);
         }
@@ -104,6 +111,11 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
             int conversions = Integer.parseInt(s_conversions.trim());
             double revenue = Double.parseDouble(s_revenue.trim());
 
+            double conversionRate = metricsCalculator.calculateCR(conversions,impressions);
+            double clickThroughRate = metricsCalculator.calculateCTR(clicks, impressions);
+            double effectiveCostPerThousand = metricsCalculator.calculateEffectiveCPM(revenue, impressions);
+            double fillRate = metricsCalculator.calculateFillRate(impressions,requests);
+
             Report report = new Report();
             report.setReportId(new ReportId(month, site));
             report.setRequests(requests);
@@ -111,6 +123,10 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
             report.setClicks(clicks);
             report.setConversions(conversions);
             report.setRevenue(revenue);
+            report.setConversionRate(conversionRate);
+            report.setClickThroughRate(clickThroughRate);
+            report.setEffectiveCostPerThousand(effectiveCostPerThousand);
+            report.setFillRate(fillRate);
 
             inMemoryReportStore.save(report);
 

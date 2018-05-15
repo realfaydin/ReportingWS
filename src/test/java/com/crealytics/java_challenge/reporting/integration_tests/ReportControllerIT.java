@@ -1,15 +1,25 @@
 package com.crealytics.java_challenge.reporting.integration_tests;
 
+import com.crealytics.java_challenge.reporting.store.InMemoryReportStore;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = com.crealytics.java_challenge.reporting.Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = "classpath:test.properties")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) //this adds a bit of overhead, by forcing a spring context reload after each time, but it is necessary to isolate each test
 public class ReportControllerIT {
 
     @LocalServerPort
@@ -18,6 +28,14 @@ public class ReportControllerIT {
     TestRestTemplate restTemplate = new TestRestTemplate();
 
     HttpHeaders headers = new HttpHeaders();
+
+    @Autowired
+    InMemoryReportStore inMemoryReportStore;
+
+    @After
+    public void truncateTables(){
+        inMemoryReportStore.deleteAll();
+    }
 
     @Test
     public void testBadRequestNoParameters(){
