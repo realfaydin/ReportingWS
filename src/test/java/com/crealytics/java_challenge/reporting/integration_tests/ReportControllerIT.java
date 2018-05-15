@@ -70,7 +70,7 @@ public class ReportControllerIT {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/reports", "1","desktop web"),
+                createURLWithPort("/reports", "1","desktop_web"),
                 HttpMethod.GET, entity, String.class);
 
         System.out.println("Response code: "+response.getStatusCode());
@@ -84,7 +84,7 @@ public class ReportControllerIT {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/reports", "12","desktop"),
+                createURLWithPort("/reports", "12","desktop_web"),
                 HttpMethod.GET, entity, String.class);
 
         assert(response.getStatusCode() == HttpStatus.NOT_FOUND);
