@@ -1,5 +1,6 @@
 package com.crealytics.java_challenge.reporting.integration_tests;
 
+import com.crealytics.java_challenge.reporting.data_model.Report;
 import com.crealytics.java_challenge.reporting.store.InMemoryReportStore;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,9 +45,9 @@ public class ReportControllerIT {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Report> response = restTemplate.exchange(
                 createURLWithPort("/reports",null, null),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.GET, entity, Report.class);
 
         assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
 
@@ -63,9 +64,9 @@ public class ReportControllerIT {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Report> response = restTemplate.exchange(
                 createURLWithPort("/reports", "banuary","desktop"),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.GET, entity, Report.class);
 
         assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
 
@@ -76,9 +77,9 @@ public class ReportControllerIT {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Report> response = restTemplate.exchange(
                 createURLWithPort("/reports", "13","desktop"),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.GET, entity, Report.class);
 
         assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
 
@@ -89,9 +90,9 @@ public class ReportControllerIT {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Report> response = restTemplate.exchange(
                 createURLWithPort("/reports", "1","desktop_web"),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.GET, entity, Report.class);
 
         System.out.println("Response code: "+response.getStatusCode());
         assert(response.getStatusCode() == HttpStatus.OK);
@@ -103,9 +104,9 @@ public class ReportControllerIT {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Report> response = restTemplate.exchange(
                 createURLWithPort("/reports", "12","desktop_web"),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.GET, entity, Report.class);
 
         assert(response.getStatusCode() == HttpStatus.NOT_FOUND);
 

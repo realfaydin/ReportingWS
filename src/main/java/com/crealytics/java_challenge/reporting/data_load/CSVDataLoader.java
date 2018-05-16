@@ -49,20 +49,28 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
 
         String reportDirectoryName = null;
         File reportDirectory = null;
-        if(configProperties.getReportFolder() == null){
+        if(configProperties.getReportDirectory() == null){
             logger.info("Using default directory for reading report files...");
             try {
                 reportDirectory = ResourceUtils.getFile("classpath:reports");
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                logger.error("",e);
             }
         }else{
-            reportDirectoryName = configProperties.getReportFolder();
-            reportDirectory = new File(reportDirectoryName);
+            reportDirectoryName = configProperties.getReportDirectory();
+            try {
+                reportDirectory = ResourceUtils.getFile("classpath:"+reportDirectoryName);
+            } catch (FileNotFoundException e) {
+                logger.error("",e);
+            }
         }
 
         if(!reportDirectory.isDirectory()){
-            logger.error("Provided path is not a directory: "+reportDirectoryName);
+            try {
+                logger.error("Provided path is not a directory: "+reportDirectory.getCanonicalPath());
+            } catch (IOException e) {
+                e.printStackTrace();e.printStackTrace();
+            }
         }
 
         //TODO: Find a better way to build the path
