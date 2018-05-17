@@ -20,10 +20,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = com.crealytics.java_challenge.reporting.Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(locations = "classpath:test.properties")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) //this adds a bit of overhead, by forcing a spring context reload after each time, but it is necessary to isolate each test
-@AutoConfigureRestDocs(outputDir = "out/snippets")
 public class ReportControllerInvalidParams extends ControllerITBase {
 
     @After
@@ -31,24 +27,24 @@ public class ReportControllerInvalidParams extends ControllerITBase {
         inMemoryReportStore.deleteAll();
     }
 
-    @Test
-    public void testBadRequestNoParameters(){
-
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-
-        ResponseEntity<Report> response = restTemplate.exchange(
-                createURLWithPort("/reports",null, null),
-                HttpMethod.GET, entity, Report.class);
-
-        assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
-
-//        String expected = "{id:Course1}";
-//        try {
-//            JSONAssert.assertEquals(expected, response.getBody(), false);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-    }
+//    @Test
+//    public void testBadRequestNoParameters(){
+//
+//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+//
+//        ResponseEntity<Report> response = restTemplate.exchange(
+//                createURLWithPort("/reports",null, null),
+//                HttpMethod.GET, entity, Report.class);
+//
+//        assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
+//
+////        String expected = "{id:Course1}";
+////        try {
+////            JSONAssert.assertEquals(expected, response.getBody(), false);
+////        } catch (JSONException e) {
+////            e.printStackTrace();
+////        }
+//    }
 
     @Test
     public void testBadRequestUnacceptedStringMonthValue(){

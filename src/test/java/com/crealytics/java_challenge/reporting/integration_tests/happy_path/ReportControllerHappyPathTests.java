@@ -20,7 +20,14 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.util.Arrays;
 import java.util.Collection;
 
+@RunWith(Parameterized.class)
 public class ReportControllerHappyPathTests extends ControllerITBase {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     private String month;
     private String site;

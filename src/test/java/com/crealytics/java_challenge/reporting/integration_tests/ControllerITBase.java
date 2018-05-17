@@ -20,19 +20,13 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@RunWith(Parameterized.class)
+
 @SpringBootTest(classes = com.crealytics.java_challenge.reporting.Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:test.properties")
 //this adds a bit of overhead, by forcing a spring context reload after each time, but it is necessary to isolate each test
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureRestDocs(outputDir = "out/snippets")
 public class ControllerITBase {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     protected TestRestTemplate restTemplate = new TestRestTemplate();
 
