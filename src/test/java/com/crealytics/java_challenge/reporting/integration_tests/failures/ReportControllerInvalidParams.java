@@ -1,6 +1,7 @@
-package com.crealytics.java_challenge.reporting.integration_tests;
+package com.crealytics.java_challenge.reporting.integration_tests.failures;
 
 import com.crealytics.java_challenge.reporting.data_model.Report;
+import com.crealytics.java_challenge.reporting.integration_tests.ControllerITBase;
 import com.crealytics.java_challenge.reporting.store.InMemoryReportStore;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -23,17 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(locations = "classpath:test.properties")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) //this adds a bit of overhead, by forcing a spring context reload after each time, but it is necessary to isolate each test
 @AutoConfigureRestDocs(outputDir = "out/snippets")
-public class ReportControllerIT {
-
-    @LocalServerPort
-    private int port;
-
-    TestRestTemplate restTemplate = new TestRestTemplate();
-
-    HttpHeaders headers = new HttpHeaders();
-
-    @Autowired
-    InMemoryReportStore inMemoryReportStore;
+public class ReportControllerInvalidParams extends ControllerITBase {
 
     @After
     public void truncateTables(){
@@ -112,23 +103,4 @@ public class ReportControllerIT {
 
     }
 
-    private String createURLWithPort(String uri, String month, String site) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("http://localhost:");
-        sb.append(port);
-        sb.append(uri);
-        sb.append("?");
-        if(month !=null){
-            sb.append("month=");
-            sb.append(month);
-        }
-        if(site != null){
-            sb.append("&");
-            sb.append("site=");
-            sb.append(site);
-        }
-
-        return sb.toString();
-    }
 }

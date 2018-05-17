@@ -43,46 +43,43 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
 
-        if(logger.isInfoEnabled()){
+        if (logger.isInfoEnabled()) {
             logger.info("LOADING CSVs... ");
         }
 
         String reportDirectoryName = null;
         File reportDirectory = null;
-        if(configProperties.getReportDirectory() == null){
-            logger.info("Using default directory for reading report files...");
-            try {
-                reportDirectory = ResourceUtils.getFile("classpath:reports");
-            } catch (FileNotFoundException e) {
-                logger.error("",e);
-            }
-        }else{
-            reportDirectoryName = configProperties.getReportDirectory();
-            try {
-                reportDirectory = ResourceUtils.getFile("classpath:"+reportDirectoryName);
-            } catch (FileNotFoundException e) {
-                logger.error("",e);
-            }
+        if (configProperties.getReportDirectory() == null) {
+            logger.error("No report directory is defined!");
+            System.exit(-1);
+        }
+        reportDirectoryName = configProperties.getReportDirectory();
+        try {
+            reportDirectory = ResourceUtils.getFile(reportDirectoryName);
+        } catch (FileNotFoundException e) {
+            logger.error("", e);
         }
 
-        if(!reportDirectory.isDirectory()){
+
+        if (!reportDirectory.isDirectory()) {
             try {
-                logger.error("Provided path is not a directory: "+reportDirectory.getCanonicalPath());
+                logger.error("Provided path is not a directory: " + reportDirectory.getCanonicalPath());
             } catch (IOException e) {
-                e.printStackTrace();e.printStackTrace();
+                e.printStackTrace();
+                e.printStackTrace();
             }
         }
 
         //TODO: Find a better way to build the path
-        for (String fileName : reportDirectory.list()){
+        for (String fileName : reportDirectory.list()) {
             final MonthEnum month = getMonthFromFileName(fileName);
-            if(month == null){
+            if (month == null) {
                 System.exit(-1);
             }
-            try (Stream<String> stream = Files.lines(Paths.get(reportDirectory.getCanonicalPath()+File.separator+fileName))) {
-                stream.skip(1).forEach(s->this.loadData(s, month));
+            try (Stream<String> stream = Files.lines(Paths.get(reportDirectory.getCanonicalPath() + File.separator + fileName))) {
+                stream.skip(1).forEach(s -> this.loadData(s, month));
             } catch (IOException e) {
-                logger.error("Error occurred while reading file: "+fileName, e);
+                logger.error("Error occurred while reading file: " + fileName, e);
                 System.exit(-1);
             }
         }
@@ -90,20 +87,20 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
 
     private MonthEnum getMonthFromFileName(String fileName) {
         String[] fileNameTokens = fileName.split("_");
-        if(fileNameTokens.length <3){
-            logger.error("File name format is not correct: "+fileName);
+        if (fileNameTokens.length < 3) {
+            logger.error("File name format is not correct: " + fileName);
             return null;
         }
 
         MonthEnum monthEnum = monthUtil.getMonthEnum(fileNameTokens[1]);
-        if(monthEnum == null ){
-            logger.error("File name format is not correct: "+fileName);
+        if (monthEnum == null) {
+            logger.error("File name format is not correct: " + fileName);
         }
         return monthEnum;
     }
 
     //TODO: Handle edge cases and validation
-    private void loadData(String record, MonthEnum month){
+    private void loadData(String record, MonthEnum month) {
         String[] fields = record.split(",");
         String site = fields[0];
         String s_requests = fields[1];
@@ -112,17 +109,13 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
         String s_conversions = fields[4];
         String s_revenue = fields[5];
 
-        try{
+        try {
             int requests = Integer.parseInt(s_requests.trim());
             int impressions = Integer.parseInt(s_impressions.trim());
             int clicks = Integer.parseInt(s_clicks.trim());
             int conversions = Integer.parseInt(s_conversions.trim());
             double revenue = Double.parseDouble(s_revenue.trim());
 
-            double conversionRate = metricsCalculator.calculateCR(conversions,impressions);
-            double clickThroughRate = metricsCalculator.calculateCTR(clicks, impressions);
-            double effectiveCostPerThousand = metricsCalculator.calculateEffectiveCPM(revenue, impressions);
-            double fillRate = metricsCalculator.calculateFillRate(impressions,requests);
 
             Report report = new Report();
             report.setReportId(new ReportId(month, site));
@@ -131,15 +124,11 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
             report.setClicks(clicks);
             report.setConversions(conversions);
             report.setRevenue(revenue);
-            report.setConversionRate(conversionRate);
-            report.setClickThroughRate(clickThroughRate);
-            report.setEffectiveCostPerThousand(effectiveCostPerThousand);
-            report.setFillRate(fillRate);
 
             inMemoryReportStore.save(report);
 
-        }catch (NumberFormatException e){
-            logger.error("Cannot parse record: "+record,e);
+        } catch (NumberFormatException e) {
+            logger.error("Cannot parse record: " + record, e);
         }
     }
 }
