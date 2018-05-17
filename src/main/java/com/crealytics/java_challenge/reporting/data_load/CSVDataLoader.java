@@ -118,7 +118,8 @@ public class CSVDataLoader implements ApplicationListener<ApplicationReadyEvent>
 
 
             Report report = new Report();
-            report.setReportId(new ReportId(month, site));
+            report.setMonth(month);
+            report.setSite(site);
             report.setRequests(requests);
             report.setImpressions(impressions);
             report.setClicks(clicks);

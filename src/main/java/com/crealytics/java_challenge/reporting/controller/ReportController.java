@@ -64,12 +64,12 @@ public class ReportController {
 
             String[] ignorePaths = prepareIgnorePaths(monthEnum, siteName);
 
-            report.setReportId(new ReportId(monthEnum, siteName));
+            report.setMonth(monthEnum);
+            report.setSite(siteName);
             ExampleMatcher matcher = ExampleMatcher.matching()
                     .withIgnoreNullValues().withIgnorePaths(ignorePaths);
             Example<Report> example = Example.of(report, matcher);
 
-//        Optional result = inMemoryReportStore.findById(new ReportId(monthEnum, siteName));
             List<Report> result = inMemoryReportStore.findAll(example);
 
             if (result == null || result.size() == 0) {
@@ -81,7 +81,8 @@ public class ReportController {
 
     private Report prepareResult(List<Report> result, MonthEnum month, String siteName) {
         Report endReport = new Report();
-        endReport.setReportId(new ReportId(month, siteName));
+        endReport.setMonth(month);
+        endReport.setSite(siteName);
 
         for (Report report : result){
             endReport.setConversions(endReport.getConversions()+report.getConversions());
@@ -101,12 +102,14 @@ public class ReportController {
         endReport.setEffectiveCostPerThousand(effectiveCostPerThousand);
         endReport.setFillRate(fillRate);
 
+
         return endReport;
     }
 
     private String[] prepareIgnorePaths(MonthEnum monthEnum, String siteName) {
         List<String> ignorePathsList = new ArrayList<String>();
 
+        ignorePathsList.add("id");
         ignorePathsList.add("impressions");
         ignorePathsList.add("clicks");
         ignorePathsList.add("conversions");
@@ -116,14 +119,13 @@ public class ReportController {
         ignorePathsList.add("fillRate");
         ignorePathsList.add("effectiveCostPerThousand");
         ignorePathsList.add("requests");
-        ignorePathsList.add("impressions");
 
         if(monthEnum == null){
-            ignorePathsList.add("reportId.month");
+            ignorePathsList.add("month");
         }
 
         if(siteName == null){
-            ignorePathsList.add("reportId.site");
+            ignorePathsList.add("site");
         }
 
         return ignorePathsList.toArray(new String[ignorePathsList.size()]);

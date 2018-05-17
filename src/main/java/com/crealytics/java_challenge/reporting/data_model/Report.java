@@ -1,17 +1,22 @@
 package com.crealytics.java_challenge.reporting.data_model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 public class Report {
 
-    @EmbeddedId
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE)
+    private int id;
 
-    private ReportId reportId;
+    @ApiModelProperty
+    private MonthEnum month;
+
+    @ApiModelProperty
+    private String site;
 
     @ApiModelProperty
     private int requests;
@@ -40,8 +45,9 @@ public class Report {
     public Report() {
     }
 
-    public Report(ReportId reportId, int requests, int impressions, int clicks, int conversions, double revenue, double clickThroughRate, double conversionRate, double fillRate, double effectiveCostPerThousand) {
-        this.reportId = reportId;
+    public Report(MonthEnum monthEnum, String site, int requests, int impressions, int clicks, int conversions, double revenue, double clickThroughRate, double conversionRate, double fillRate, double effectiveCostPerThousand) {
+        this.month = monthEnum;
+        this.site = site;
         this.requests = requests;
         this.impressions = impressions;
         this.clicks = clicks;
@@ -53,12 +59,29 @@ public class Report {
         this.effectiveCostPerThousand = effectiveCostPerThousand;
     }
 
-    public ReportId getReportId() {
-        return reportId;
+    @JsonIgnore
+    public int getId() {
+        return id;
     }
 
-    public void setReportId(ReportId reportId) {
-        this.reportId = reportId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public MonthEnum getMonth() {
+        return month;
+    }
+
+    public void setMonth(MonthEnum month) {
+        this.month = month;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
     }
 
     public int getRequests() {
