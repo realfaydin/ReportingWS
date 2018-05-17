@@ -52,8 +52,6 @@ public class ReportController {
     })
     @GetMapping("/reports")
     public Report generateReport(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "site", required = false) String site) {
-
-        try {
             if (logger.isInfoEnabled()) {
                 logger.info("Request received for report generation with params-> month=" + month + ", site=" + site);
             }
@@ -79,9 +77,6 @@ public class ReportController {
             } else {
                 return prepareResult(result, monthEnum, siteName);
             }
-        }catch (Exception e){
-            throw new InternalServerErrorException();
-        }
     }
 
     private Report prepareResult(List<Report> result, MonthEnum month, String siteName) {
