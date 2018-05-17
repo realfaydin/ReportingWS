@@ -1,4 +1,4 @@
-package com.crealytics.java_challenge.reporting.controller;
+package com.crealytics.java_challenge.reporting.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

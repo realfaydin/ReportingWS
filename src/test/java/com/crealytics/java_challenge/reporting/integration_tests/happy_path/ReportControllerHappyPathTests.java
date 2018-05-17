@@ -5,15 +5,10 @@ import com.crealytics.java_challenge.reporting.integration_tests.ControllerITBas
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -57,6 +52,9 @@ public class ReportControllerHappyPathTests extends ControllerITBase {
                 {"FEB", "android"},
                 {"JAN", "iOS"},
                 {"FEB", "iOS"},
+
+                {"JANUARY", "desktop_web"},
+                {"FEBRUARY", "desktop_web"},
 
                 {null, "desktop_web"},
                 {null, "mobile_web"},

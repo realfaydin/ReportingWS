@@ -1,5 +1,7 @@
 package com.crealytics.java_challenge.reporting.data_model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -8,21 +10,31 @@ import javax.persistence.Transient;
 public class Report {
 
     @EmbeddedId
+
     private ReportId reportId;
 
+    @ApiModelProperty
     private int requests;
+    @ApiModelProperty
     private int impressions;
+    @ApiModelProperty
     private int clicks;
+    @ApiModelProperty
     private int conversions;
+    @ApiModelProperty
     private double revenue;
 
     @Transient
+    @ApiModelProperty
     private double clickThroughRate;
     @Transient
+    @ApiModelProperty
     private double conversionRate;
     @Transient
+    @ApiModelProperty
     private double fillRate;
     @Transient
+    @ApiModelProperty
     private double effectiveCostPerThousand;
 
     public Report() {

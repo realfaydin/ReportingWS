@@ -1,6 +1,6 @@
 package com.crealytics.java_challenge.reporting.util;
 
-import com.crealytics.java_challenge.reporting.controller.BadRequestException;
+import com.crealytics.java_challenge.reporting.controller.exception.BadRequestException;
 import com.crealytics.java_challenge.reporting.data_model.SiteNameEnum;
 import org.springframework.stereotype.Component;
 

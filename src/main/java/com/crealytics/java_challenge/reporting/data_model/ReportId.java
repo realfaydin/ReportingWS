@@ -1,5 +1,6 @@
 package com.crealytics.java_challenge.reporting.data_model;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.Embeddable;
@@ -9,9 +10,11 @@ import java.io.Serializable;
 public class ReportId implements Serializable{
 
     @Nullable
+    @ApiModelProperty
     private MonthEnum month;
 
     @Nullable
+    @ApiModelProperty
     private String site;
 
     public ReportId(){

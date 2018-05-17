@@ -1,5 +1,7 @@
 package com.crealytics.java_challenge.reporting.controller;
 
+import com.crealytics.java_challenge.reporting.controller.exception.InternalServerErrorException;
+import com.crealytics.java_challenge.reporting.controller.exception.NotFoundException;
 import com.crealytics.java_challenge.reporting.data_model.MonthEnum;
 import com.crealytics.java_challenge.reporting.data_model.Report;
 import com.crealytics.java_challenge.reporting.data_model.ReportId;
@@ -8,6 +10,9 @@ import com.crealytics.java_challenge.reporting.metrics.MetricsCalculator;
 import com.crealytics.java_challenge.reporting.store.InMemoryReportStore;
 import com.crealytics.java_challenge.reporting.util.MonthUtil;
 import com.crealytics.java_challenge.reporting.util.SiteNameUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+
+@Api(value="ReportService", description="Generates CRT, CR, eCPM and FR")
 public class ReportController {
 
     Logger logger = LoggerFactory.getLogger(ReportController.class.getName());
@@ -38,34 +44,44 @@ public class ReportController {
     @Autowired
     MetricsCalculator metricsCalculator;
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 404, message = "No report found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @GetMapping("/reports")
     public Report generateReport(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "site", required = false) String site) {
 
-        if (logger.isInfoEnabled()) {
-            logger.info("Request received for report generation with params-> month=" + month + ", site=" + site);
-        }
+        try {
+            if (logger.isInfoEnabled()) {
+                logger.info("Request received for report generation with params-> month=" + month + ", site=" + site);
+            }
 
-        MonthEnum monthEnum = monthUtil.getMonthEnum(month);
-        SiteNameEnum siteNameEnum = siteNameUtil.getSiteNameEnum(site);
-        String siteName=(siteNameEnum==null)?null:siteNameEnum.getSiteName();
+            MonthEnum monthEnum = monthUtil.getMonthEnum(month);
+            SiteNameEnum siteNameEnum = siteNameUtil.getSiteNameEnum(site);
+            String siteName = (siteNameEnum == null) ? null : siteNameEnum.getSiteName();
 
-        Report report = new Report();
+            Report report = new Report();
 
-        String[] ignorePaths = prepareIgnorePaths(monthEnum, siteName);
+            String[] ignorePaths = prepareIgnorePaths(monthEnum, siteName);
 
-        report.setReportId(new ReportId(monthEnum, siteName));
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withIgnoreNullValues().withIgnorePaths(ignorePaths);
-        Example<Report> example = Example.of(report, matcher);
+            report.setReportId(new ReportId(monthEnum, siteName));
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withIgnoreNullValues().withIgnorePaths(ignorePaths);
+            Example<Report> example = Example.of(report, matcher);
 
 //        Optional result = inMemoryReportStore.findById(new ReportId(monthEnum, siteName));
             List<Report> result = inMemoryReportStore.findAll(example);
 
-            if(result == null || result.size() == 0){
+            if (result == null || result.size() == 0) {
                 throw new NotFoundException();
-            }else{
+            } else {
                 return prepareResult(result, monthEnum, siteName);
             }
+        }catch (Exception e){
+            throw new InternalServerErrorException();
+        }
     }
 
     private Report prepareResult(List<Report> result, MonthEnum month, String siteName) {

@@ -27,25 +27,6 @@ public class ReportControllerInvalidParams extends ControllerITBase {
         inMemoryReportStore.deleteAll();
     }
 
-//    @Test
-//    public void testBadRequestNoParameters(){
-//
-//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-//
-//        ResponseEntity<Report> response = restTemplate.exchange(
-//                createURLWithPort("/reports",null, null),
-//                HttpMethod.GET, entity, Report.class);
-//
-//        assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
-//
-////        String expected = "{id:Course1}";
-////        try {
-////            JSONAssert.assertEquals(expected, response.getBody(), false);
-////        } catch (JSONException e) {
-////            e.printStackTrace();
-////        }
-//    }
-
     @Test
     public void testBadRequestUnacceptedStringMonthValue(){
 
@@ -69,20 +50,6 @@ public class ReportControllerInvalidParams extends ControllerITBase {
                 HttpMethod.GET, entity, Report.class);
 
         assert(response.getStatusCode() == HttpStatus.BAD_REQUEST);
-
-    }
-
-    @Test
-    public void testAcceptedMonthValue(){
-
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-
-        ResponseEntity<Report> response = restTemplate.exchange(
-                createURLWithPort("/reports", "1","desktop_web"),
-                HttpMethod.GET, entity, Report.class);
-
-        System.out.println("Response code: "+response.getStatusCode());
-        assert(response.getStatusCode() == HttpStatus.OK);
 
     }
 
